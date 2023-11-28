@@ -20,9 +20,9 @@ void CClientSocket::SetListenSocket(CAsyncSocket* pSocket)
 
 void CClientSocket::OnClose(int nErrorCode)
 {
+	CSocket::OnClose(nErrorCode);
 	CListenSocket* pServerSocket = (CListenSocket*)m_pListenSocket;
 	pServerSocket->CloseClientSocket(this);
-	CSocket::OnClose(nErrorCode);
 }
 
 void CClientSocket::OnReceive(int nErrorCode)
@@ -36,7 +36,7 @@ void CClientSocket::OnReceive(int nErrorCode)
 
 	GetPeerName(strIPAddress, uPortNumber);
 	if (Receive(strBuffer, sizeof(strBuffer)) > 0) // 전달된 데이터(문자열)가 있을 경우
-	{ 
+	{
 		TRACE(_T("Received data: %s\n"), strBuffer);
 		CStringArray tokens;
 		SplitCString(strBuffer, tokens, _T(','));
@@ -77,7 +77,7 @@ void CClientSocket::OnReceive(int nErrorCode)
 						file.Close();
 						TRACE(_T("File saved to: %s\n"), saveFilePath);
 						Receive_Streaming();
-						pMain->OnBnClickedButton1();
+						pMain->Send_img_Python();
 					}
 					else 
 					{

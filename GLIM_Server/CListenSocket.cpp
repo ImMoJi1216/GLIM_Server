@@ -75,3 +75,56 @@ void CListenSocket::CloseClientSocket(CSocket* pClient)
 	m_ptrClientSocketList.RemoveAt(pos);
 	delete pClient;
 }
+
+void CListenSocket::Send_Test_results(int num)
+{
+	POSITION pos;
+	pos = m_ptrClientSocketList.GetHeadPosition();
+	CClientSocket* pClient = NULL;
+
+	while (pos != NULL)
+	{
+		pClient = (CClientSocket*)m_ptrClientSocketList.GetNext(pos);
+		if (pClient != NULL) {
+			// 이 함수는 전송한 데이터의 길이를 반환한다.
+			CString strMessageToSend;
+			strMessageToSend.Format(_T("Results,%d"), num);
+
+			// 문자열을 전송 
+			pClient->Send((LPCTSTR)strMessageToSend, strMessageToSend.GetLength() * sizeof(TCHAR));
+		}
+	}
+
+	//if (num == 1)
+	//{
+	//	CClientSocket* pClient;
+	//	AfxMessageBox(_T("씨발ㅇㄹ"));
+	//	if (pClient != NULL)
+	//	{
+	//		CString strMessageToSend;
+	//		strMessageToSend.Format(_T("Results,%d"), num);
+
+	//		// 문자열을 전송
+	//		pClient->Send((LPCTSTR)strMessageToSend, strMessageToSend.GetLength() * sizeof(TCHAR));
+	//	}
+	//}
+	//else
+	//{
+	//	POSITION pos;
+	//	pos = m_ptrClientSocketList.GetHeadPosition();
+	//	CClientSocket* pClient = NULL;
+
+	//	while (pos != NULL)
+	//	{
+	//		pClient = (CClientSocket*)m_ptrClientSocketList.GetNext(pos);
+	//		if (pClient != NULL)
+	//		{
+	//			CString strMessageToSend;
+	//			strMessageToSend.Format(_T("Results,%d"), num);
+
+	//			// 문자열을 전송
+	//			pClient->Send((LPCTSTR)strMessageToSend, strMessageToSend.GetLength() * sizeof(TCHAR));
+	//		}
+	//	}
+	//}
+}

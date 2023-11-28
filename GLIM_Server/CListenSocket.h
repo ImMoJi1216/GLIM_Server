@@ -10,4 +10,5 @@ public:
 	CPtrList m_ptrClientSocketList;
 	void OnAccept(int nErrorCode);
 	void CloseClientSocket(CSocket* pClient);
+	void Send_Test_results(int num);
 };

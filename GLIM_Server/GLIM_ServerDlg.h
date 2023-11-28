@@ -44,7 +44,10 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	afx_msg void OnBnClickedButton1();
+	afx_msg void OnBnClickedButton2();
+
+	void Send_img_Python();
+
 	CListBox m_List;
 	CStatic m_Picture;
-	afx_msg void OnBnClickedButton2();
 };
