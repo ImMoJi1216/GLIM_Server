@@ -1,16 +1,14 @@
 #include "pch.h"
-#include "CClientSocket.h"
-#include "CListenSocket.h"
 #include "GLIM_ServerDlg.h"
+#include "CListenSocket.h"
+#include "CClientSocket.h"
 
 CClientSocket::CClientSocket()
 {
-	StartReceiveThread();
 }
 
 CClientSocket::~CClientSocket()
 {
-
 }
 
 void CClientSocket::SetListenSocket(CAsyncSocket* pSocket)
@@ -21,6 +19,7 @@ void CClientSocket::SetListenSocket(CAsyncSocket* pSocket)
 void CClientSocket::OnClose(int nErrorCode)
 {
 	CSocket::OnClose(nErrorCode);
+
 	CListenSocket* pServerSocket = (CListenSocket*)m_pListenSocket;
 	pServerSocket->CloseClientSocket(this);
 }
@@ -132,17 +131,4 @@ void CClientSocket::Receive_Streaming()
 	{
 		TRACE(_T("야 너 오류남 좆됨!!!!!!!!!!!"));
 	}
-}
-
-UINT ReceiveThread(LPVOID pParam)
-{
-	CClientSocket* pServerSocket = reinterpret_cast<CClientSocket*>(pParam);
-	pServerSocket->OnReceive(0); // OnReceive 함수 호출
-	Sleep(1); // 다른 작업을 수행하도록 잠시 대기
-	return 0;
-}
-
-void CClientSocket::StartReceiveThread()
-{
-	AfxBeginThread(ReceiveThread, this);
 }

@@ -110,7 +110,6 @@ BOOL CGLIMServerDlg::OnInitDialog()
 	// 소켓생성 (서버 시작)
 	if (m_ListenSocket.Create(25000, SOCK_STREAM))
 	{
-		CString str;
 		if (!m_ListenSocket.Listen()) 
 		{
 			AfxMessageBox(_T("ERROR:Listen() return False"));
@@ -192,9 +191,11 @@ void CGLIMServerDlg::OnDestroy()
 	CClientSocket* pClient = NULL;
 
 	// 생성되어있는 클라이언트 소켓이 없을때까지 체크하여 소켓닫기
-	while (pos != NULL) {
+	while (pos != NULL) 
+	{
 		pClient = (CClientSocket*)m_ListenSocket.m_ptrClientSocketList.GetNext(pos);
-		if (pClient != NULL) {
+		if (pClient != NULL) 
+		{
 			pClient->ShutDown(); // 연결된 상대방 소켓에 연결이 종료됨을 알린다. 
 			pClient->Close(); // 소켓을 닫는다
 
