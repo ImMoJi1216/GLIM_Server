@@ -215,6 +215,11 @@ HCURSOR CGLIMServerDlg::OnQueryDragIcon()
 void CGLIMServerDlg::OnBnClickedButton1()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	Send_img_Python();
+}
+
+void CGLIMServerDlg::Send_img_Python()
+{
 	CString filePath = _T("C:/Users/LMS23/Desktop/GLIM_Server_fileSave/Temp_Streaming_image.jpg");	// 파일 경로
 	CString fileName = _T("Temp_Streaming_image.jpg");					   				     		// 파일 이름
 

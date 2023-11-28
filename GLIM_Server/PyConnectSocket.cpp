@@ -15,6 +15,8 @@ void PyConnectSocket::OnClose(int nErrorCode)
 
 void PyConnectSocket::OnReceive(int nErrorCode)
 {
+    CGLIMServerDlg* pMain = (CGLIMServerDlg*)AfxGetMainWnd();
+    CListenSocket* pServerSocket = (CListenSocket*)AfxGetMainWnd();
     char strBuffer[1024];
     ::ZeroMemory(strBuffer, sizeof(strBuffer));
 
@@ -33,7 +35,17 @@ void PyConnectSocket::OnReceive(int nErrorCode)
             MultiByteToWideChar(CP_UTF8, 0, strUTF8, -1, strDecoded.GetBuffer(nChars), nChars);
             strDecoded.ReleaseBuffer();
 
-            CGLIMServerDlg* pMain = (CGLIMServerDlg*)AfxGetMainWnd();
+            CStringArray tokens;
+            SplitCString(strDecoded, tokens, _T(','));
+            CString str = tokens.GetAt(0);
+            if (str == "RED")
+            {
+                pServerSocket->Send_Test_results(1);
+            }
+            else
+            {
+                pServerSocket->Send_Test_results(0);
+            }
             str.Format(_T("[ PYTHON ] : %s"), strDecoded);
             pMain->m_List.AddString(str);
             pMain->m_List.SetCurSel(pMain->m_List.GetCount() - 1);
@@ -45,4 +57,20 @@ void PyConnectSocket::OnReceive(int nErrorCode)
         }
     }
     CSocket::OnReceive(nErrorCode);
+}
+
+void PyConnectSocket::SplitCString(const CString& input, CStringArray& output, TCHAR delimiter)
+{
+    int start = 0;
+    int end = 0;
+
+    while ((end = input.Find(delimiter, start)) != -1)
+    {
+        CString token = input.Mid(start, end - start);
+        output.Add(token);
+        start = end + 1;
+    }
+
+    CString lastToken = input.Mid(start);
+    output.Add(lastToken);
 }
