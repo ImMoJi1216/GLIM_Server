@@ -84,6 +84,7 @@ void CListenSocket::Send_Test_results(int num)
 
 	while (pos != NULL)
 	{
+		AfxMessageBox(_T("슈ㅠㅠ"));
 		pClient = (CClientSocket*)m_ptrClientSocketList.GetNext(pos);
 		if (pClient != NULL) {
 			// 이 함수는 전송한 데이터의 길이를 반환한다.
