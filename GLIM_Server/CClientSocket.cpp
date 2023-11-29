@@ -47,18 +47,13 @@ void CClientSocket::OnReceive(int nErrorCode)
 			{
 				CString Message_Token = tokens.GetAt(1);
 				strTmp.Format(_T("[%s:%d]: %s"), strIPAddress, uPortNumber, Message_Token);
-				pMain->m_List.AddString(strTmp);  // 메시지 리스트(메시지창?)에 입력받은 메시지 띄우기
-				pMain->m_List.SetCurSel(pMain->m_List.GetCount() - 1);
 				CListenSocket* pServerSocket = (CListenSocket*)m_pListenSocket;
-				//pServerSocket->SendAllMessage(Message_Token.GetBuffer()); // 다른 클라이언트들에게 메시지 전달
 			}
 			else if (Type_Token == "Type:File")			// 구분자 타입이 파일일때
 			{
 				CString Filesize_Token = tokens.GetAt(1);
 				CString Filename_Token = tokens.GetAt(2);
 				strTmp.Format(_T("Received File: Size=%s, Name=%s\n"), Filesize_Token, Filename_Token);
-				pMain->m_List.AddString(strTmp);
-
 				ULONGLONG fileSize = _ttoi64(Filesize_Token);
 				char* fileBuffer = new char[fileSize];
 

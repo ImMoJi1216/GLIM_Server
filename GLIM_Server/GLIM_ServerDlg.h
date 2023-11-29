@@ -46,6 +46,7 @@ public:
 	afx_msg void OnBnClickedButton1();
 	afx_msg void OnBnClickedButton2();
 
+	void Send_Test_Result(int num);
 	void Send_img_Python();
 
 	CListBox m_List;

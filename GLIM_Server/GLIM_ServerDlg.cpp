@@ -246,8 +246,26 @@ void CGLIMServerDlg::Send_img_Python()
 	}
 }
 
+void CGLIMServerDlg::Send_Test_Result(int num)
+{
+	POSITION pos;
+	pos = m_ListenSocket.m_ptrClientSocketList.GetHeadPosition();
+	CClientSocket* pClient = NULL;
+
+	// 생성되어있는 클라이언트 소켓이 없을때까지 체크하여 소켓닫기
+	while (pos != NULL)
+	{
+		pClient = (CClientSocket*)m_ListenSocket.m_ptrClientSocketList.GetNext(pos);
+		if (pClient != NULL)
+		{
+			CString strMessageToSend;
+			strMessageToSend.Format(_T("Results,%d"), num);
+			pClient->Send(strMessageToSend, strMessageToSend.GetLength() * sizeof(TCHAR));
+		}
+	}
+}
+
 void CGLIMServerDlg::OnBnClickedButton2()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-
 }

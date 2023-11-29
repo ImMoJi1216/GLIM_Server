@@ -78,16 +78,3 @@ void CListenSocket::CloseClientSocket(CSocket* pClient)
 		delete pClient;
 	}
 }
-
-void CListenSocket::Send_Test_results(int num)
-{
-	TRACE(_T("%d\n\n\n"), m_clientSockets.GetSize());
-
-	for (int i = 0; i < m_clientSockets.GetSize(); ++i)
-	{
-		CClientSocket* pClientSocket = m_clientSockets.GetAt(i);
-		CString strMessageToSend;
-		strMessageToSend.Format(_T("Results,%d"), num);
-		pClientSocket->Send(strMessageToSend, strMessageToSend.GetLength() * sizeof(TCHAR));
-	}
-}
