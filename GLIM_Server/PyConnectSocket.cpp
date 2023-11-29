@@ -37,14 +37,18 @@ void PyConnectSocket::OnReceive(int nErrorCode)
 
             CStringArray tokens;
             SplitCString(strDecoded, tokens, _T(','));
-            CString str = tokens.GetAt(0);
-            if (str == "RED")
+            CString clolr = tokens.GetAt(0);
+            CString Figure = tokens.GetAt(1);
+
+            TRACE(Figure);
+
+            if (clolr == "RED" && Figure == "pentagon")
             {
-                pServerSocket->Send_Test_results(1);
+                pMain->Send_Test_Result(3);
             }
             else
             {
-                pServerSocket->Send_Test_results(0);
+                pMain->Send_Test_Result(2);
             }
             str.Format(_T("[ PYTHON ] : %s"), strDecoded);
             pMain->m_List.AddString(str);

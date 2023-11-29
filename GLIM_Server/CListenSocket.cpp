@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "GLIM_ServerDlg.h"
-#include "CClientSocket.h"
+
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -10,6 +10,7 @@ static char THIS_FILE[] = __FILE__;
 
 CListenSocket::CListenSocket()
 {
+	//m_ptrClientSocketList.RemoveAll();
 }
 
 CListenSocket::~CListenSocket()
@@ -18,22 +19,23 @@ CListenSocket::~CListenSocket()
 
 void CListenSocket::OnAccept(int nErrorCode)
 {
-	CClientSocket* pClient = new CClientSocket;
+	CClientSocket* p_Client = new CClientSocket;
 	CString str;
 
-	if (Accept(*pClient))															// if(접속 요청이 오면)
+	if (Accept(*p_Client))															 // 클라이언트 접속 요청이 오면 서버-클라이언트를 연결시켜준다
 	{
-		pClient->SetListenSocket(this);												//
-		m_ptrClientSocketList.AddTail(pClient);										// 리스트의 뒷부분에 클라이언트 소켓을 저장
+		p_Client->SetListenSocket(this);
+		m_ptrClientSocketList.AddTail(p_Client);									 // 리스트에 클라이언트 소켓 저장
+		m_clientSockets.Add(p_Client);
 
-		CGLIMServerDlg* pMain = (CGLIMServerDlg*)AfxGetMainWnd();					// CGLIMServerDlg의 핸들을 가져온다
-		str.Format(_T("Client (%d)")), (int)m_ptrClientSocketList.Find(pClient);	// 클라이언트 번호(POSITION(주소) 값)
-		pMain->clientList->AddString(str);
+		CGLIMServerDlg* pMain = (CGLIMServerDlg*)AfxGetMainWnd();					 // CGLIMServerDlg의 핸들을 가져옴
+		str.Format(_T("Client (%d)"), (int)m_ptrClientSocketList.Find(p_Client));	 // 클라이언트 번호(POSITION(주소) 값)
+		pMain->clientList->AddString(str);											 // 클라이언트가 접속할때마다 리스트에 클라이언트 이름 추가
 	}
-	else
+	else 
 	{
-		delete pClient;
-		AfxMessageBox(_T("ERROR : Faild can't accept new Client"));
+		delete p_Client;
+		AfxMessageBox(_T("ERROR : Failed can't accept new Client!"));
 	}
 	CAsyncSocket::OnAccept(nErrorCode);
 }
@@ -42,89 +44,37 @@ void CListenSocket::CloseClientSocket(CSocket* pClient)
 {
 	POSITION pos;
 	pos = m_ptrClientSocketList.Find(pClient);
-	
-	if (pos != NULL)
+
+	if (pos != NULL) 
 	{
-		if (pClient != NULL)
+		if (pClient != NULL) 
 		{
-			// 클라이언트 연결 중지후 종료
+			// 클라이언트 연결중지후 종료
 			pClient->ShutDown();
 			pClient->Close();
 		}
-	}
 
-	CGLIMServerDlg* pMain = (CGLIMServerDlg*)AfxGetMainWnd();
-	CString str1, str2;
-	UINT indx = 0, posNum;
-	pMain->clientList->SetCurSel(0);
-	// 접속이 종료된 클라이언트 찾기
-	while (indx < pMain->clientList->GetCount())
-	{
-		posNum = (int)m_ptrClientSocketList.Find(pClient);
-		pMain->clientList->GetText(indx, str1);
-		str2.Format(_T("%d"), posNum);
-
-		if (str1.Find(str2) != -1)
+		CGLIMServerDlg* pMain = (CGLIMServerDlg*)AfxGetMainWnd();
+		CString str1, str2;
+		UINT indx = 0, posNum;
+		pMain->clientList->SetCurSel(0);
+		// 접속 종료되는 클라이언트 찾기
+		while (indx < pMain->clientList->GetCount()) 
 		{
-			AfxMessageBox(str1 + str2);
-			pMain->clientList->DeleteString(indx);
-			break;
+			posNum = (int)m_ptrClientSocketList.Find(pClient);
+			pMain->clientList->GetText(indx, str1);
+			str2.Format(_T("%d"), posNum);
+			// 소켓리스트, 클라이언트리스트를 비교해서 같은 클라이언트 번호(POSITION 값) 있으면 리스트에서 삭제
+			if (str1.Find(str2) != -1) 
+			{
+				AfxMessageBox(str1 + str2);
+				pMain->clientList->DeleteString(indx);
+				break;
+			}
+			indx++;
 		}
-		indx++;
+
+		m_ptrClientSocketList.RemoveAt(pos);
+		delete pClient;
 	}
-	m_ptrClientSocketList.RemoveAt(pos);
-	delete pClient;
-}
-
-void CListenSocket::Send_Test_results(int num)
-{
-	POSITION pos;
-	pos = m_ptrClientSocketList.GetHeadPosition();
-	CClientSocket* pClient = NULL;
-
-	while (pos != NULL)
-	{
-		pClient = (CClientSocket*)m_ptrClientSocketList.GetNext(pos);
-		if (pClient != NULL) {
-			// 이 함수는 전송한 데이터의 길이를 반환한다.
-			CString strMessageToSend;
-			strMessageToSend.Format(_T("Results,%d"), num);
-
-			// 문자열을 전송 
-			pClient->Send((LPCTSTR)strMessageToSend, strMessageToSend.GetLength() * sizeof(TCHAR));
-		}
-	}
-
-	//if (num == 1)
-	//{
-	//	CClientSocket* pClient;
-	//	AfxMessageBox(_T("씨발ㅇㄹ"));
-	//	if (pClient != NULL)
-	//	{
-	//		CString strMessageToSend;
-	//		strMessageToSend.Format(_T("Results,%d"), num);
-
-	//		// 문자열을 전송
-	//		pClient->Send((LPCTSTR)strMessageToSend, strMessageToSend.GetLength() * sizeof(TCHAR));
-	//	}
-	//}
-	//else
-	//{
-	//	POSITION pos;
-	//	pos = m_ptrClientSocketList.GetHeadPosition();
-	//	CClientSocket* pClient = NULL;
-
-	//	while (pos != NULL)
-	//	{
-	//		pClient = (CClientSocket*)m_ptrClientSocketList.GetNext(pos);
-	//		if (pClient != NULL)
-	//		{
-	//			CString strMessageToSend;
-	//			strMessageToSend.Format(_T("Results,%d"), num);
-
-	//			// 문자열을 전송
-	//			pClient->Send((LPCTSTR)strMessageToSend, strMessageToSend.GetLength() * sizeof(TCHAR));
-	//		}
-	//	}
-	//}
 }

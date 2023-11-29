@@ -1,16 +1,14 @@
 #include "pch.h"
-#include "CClientSocket.h"
-#include "CListenSocket.h"
 #include "GLIM_ServerDlg.h"
+#include "CListenSocket.h"
+#include "CClientSocket.h"
 
 CClientSocket::CClientSocket()
 {
-	StartReceiveThread();
 }
 
 CClientSocket::~CClientSocket()
 {
-
 }
 
 void CClientSocket::SetListenSocket(CAsyncSocket* pSocket)
@@ -21,6 +19,7 @@ void CClientSocket::SetListenSocket(CAsyncSocket* pSocket)
 void CClientSocket::OnClose(int nErrorCode)
 {
 	CSocket::OnClose(nErrorCode);
+
 	CListenSocket* pServerSocket = (CListenSocket*)m_pListenSocket;
 	pServerSocket->CloseClientSocket(this);
 }
@@ -48,18 +47,13 @@ void CClientSocket::OnReceive(int nErrorCode)
 			{
 				CString Message_Token = tokens.GetAt(1);
 				strTmp.Format(_T("[%s:%d]: %s"), strIPAddress, uPortNumber, Message_Token);
-				pMain->m_List.AddString(strTmp);  // 메시지 리스트(메시지창?)에 입력받은 메시지 띄우기
-				pMain->m_List.SetCurSel(pMain->m_List.GetCount() - 1);
 				CListenSocket* pServerSocket = (CListenSocket*)m_pListenSocket;
-				//pServerSocket->SendAllMessage(Message_Token.GetBuffer()); // 다른 클라이언트들에게 메시지 전달
 			}
 			else if (Type_Token == "Type:File")			// 구분자 타입이 파일일때
 			{
 				CString Filesize_Token = tokens.GetAt(1);
 				CString Filename_Token = tokens.GetAt(2);
 				strTmp.Format(_T("Received File: Size=%s, Name=%s\n"), Filesize_Token, Filename_Token);
-				pMain->m_List.AddString(strTmp);
-
 				ULONGLONG fileSize = _ttoi64(Filesize_Token);
 				char* fileBuffer = new char[fileSize];
 
@@ -132,17 +126,4 @@ void CClientSocket::Receive_Streaming()
 	{
 		TRACE(_T("야 너 오류남 좆됨!!!!!!!!!!!"));
 	}
-}
-
-UINT ReceiveThread(LPVOID pParam)
-{
-	CClientSocket* pServerSocket = reinterpret_cast<CClientSocket*>(pParam);
-	pServerSocket->OnReceive(0); // OnReceive 함수 호출
-	Sleep(1); // 다른 작업을 수행하도록 잠시 대기
-	return 0;
-}
-
-void CClientSocket::StartReceiveThread()
-{
-	AfxBeginThread(ReceiveThread, this);
 }

@@ -17,9 +17,9 @@ public:
 	void Receive_Streaming();
 	void SplitCString(const CString& input, CStringArray& output, TCHAR delimiter);
 	void SetListenSocket(CAsyncSocket* pSocket);
+	void Send_Test_results(int num);
 
 	void OnClose(int nErrorCode);
 	void OnReceive(int nErrorCode);
-	void StartReceiveThread();
 };
 
