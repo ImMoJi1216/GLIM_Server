@@ -43,11 +43,8 @@ protected:
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
 public:
-	afx_msg void OnBnClickedButton1();
-	afx_msg void OnBnClickedButton2();
-
-	void Send_Test_Result(int num);
-	void Send_img_Python();
+	void Send_Test_Result(int num);			// 결과값 전송
+	void Send_img_Python();					// 파이썬 서버로 이미지 전송
 
 	CListBox m_List;
 	CStatic m_Picture;

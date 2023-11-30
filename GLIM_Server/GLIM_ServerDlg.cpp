@@ -67,8 +67,6 @@ BEGIN_MESSAGE_MAP(CGLIMServerDlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
-	ON_BN_CLICKED(IDC_BUTTON1, &CGLIMServerDlg::OnBnClickedButton1)
-	ON_BN_CLICKED(IDC_BUTTON2, &CGLIMServerDlg::OnBnClickedButton2)
 END_MESSAGE_MAP()
 
 
@@ -213,12 +211,6 @@ HCURSOR CGLIMServerDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
-void CGLIMServerDlg::OnBnClickedButton1()
-{
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	Send_img_Python();
-}
-
 void CGLIMServerDlg::Send_img_Python()
 {
 	CString filePath = _T("C:/Users/LMS23/Desktop/GLIM_Server_fileSave/Temp_Streaming_image.jpg");	// 파일 경로
@@ -263,9 +255,4 @@ void CGLIMServerDlg::Send_Test_Result(int num)
 			pClient->Send(strMessageToSend, strMessageToSend.GetLength() * sizeof(TCHAR));
 		}
 	}
-}
-
-void CGLIMServerDlg::OnBnClickedButton2()
-{
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 }
